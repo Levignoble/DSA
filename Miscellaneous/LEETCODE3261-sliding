@@ -1,3 +1,13 @@
+/*
+We cant simply take prefix[high]-prefix[low]
+coz it will give substrings that end between low and high but the substring should also start in this range thats why it will give wrong answer.
+If you take prefix[high] - prefix[low-1], it would give the total number of valid substrings that end at positions from low to high, but it doesn't account for whether they start in a valid position with respect to the k constraint.
+On this Our solution will be based on , first from given low index we find the max valid index till which we get substrings , and now from this validind we apply prefix[high] - prefix[validind];
+After calculating that part, you use prefix[high] - prefix[validlow] to add the number of valid substrings starting beyond low and ending at high.
+*/
+
+
+
 class Solution {
 public:
     vector<long long> countKConstraintSubstrings(string s, int k, vector<vector<int>>& queries) {
