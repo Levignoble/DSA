@@ -1,0 +1,60 @@
+class Solution {
+public:
+    vector<long long> countKConstraintSubstrings(string s, int k, vector<vector<int>>& queries) {
+        int left=0,right=0,n=s.size();
+        int ones=0;
+        int zeros=0;
+        vector<int> leftmost(n,0),rightmost(n,0);
+        while(right<n)
+        {
+            if(s[right]=='0') zeros++;
+            else ones++;
+            while(ones>k && zeros>k)
+            {
+                if(s[left]=='0') zeros--;
+                else ones--;
+                left++;
+            }
+            leftmost[right]=left;
+            right++;
+        }
+        ones=0,zeros=0;
+        left=n-1,right=n-1;
+        while(right>=0)
+        {
+            if(s[right]=='0') zeros++;
+            else ones++;
+            while(ones>k && zeros>k)
+            {
+                if(s[left]=='0') zeros--;
+                else ones--;
+                left--;
+            }
+            rightmost[left]=right;
+            right--;
+        }
+        
+        vector<long long> prefix(n,0);
+        long long cnt=0;
+        for(int j=0;j<n;j++)
+        {
+            cnt+=j-leftmost[j]+1;
+            prefix.push_back(cnt);
+        }
+        vector<long long> result;
+        for(int i=0;i<queries.size();i++)
+        {
+            int low=queries[i][0];
+            int high=queries[i][1];
+
+            int validlow=min(rightmost[low],high);
+            long long total=(validlow-low+1)*(validlow-low+2)/2;
+            total+=prefix[high]-prefix[validlow];
+            result.push_back(total);
+        }
+
+
+        return result;
+        
+    }
+};
