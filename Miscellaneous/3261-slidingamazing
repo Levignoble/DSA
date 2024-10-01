@@ -1,9 +1,14 @@
 /*
 We cant simply take prefix[high]-prefix[low]
 coz it will give substrings that end between low and high but the substring should also start in this range thats why it will give wrong answer.
-If you take prefix[high] - prefix[low-1], it would give the total number of valid substrings that end at positions from low to high, but it doesn't account for whether they start in a valid position with respect to the k constraint.
+It will be add those substrings as well that started before the given low and hence give the wrong answer.
+
 On this Our solution will be based on , first from given low index we find the max valid index till which we get substrings , and now from this validind we apply prefix[high] - prefix[validind];
-After calculating that part, you use prefix[high] - prefix[validlow] to add the number of valid substrings starting beyond low and ending at high.
+This works because we have calculated that on a given index low , till where the valid window/substring exists , lets call it validind, now remaining part is calculated using prefix[high]-prefix[low] ,
+the first part will always be from low , but in this prefix part we count those substring that end in range validind to high , now u will be wondering why this 
+doesnt count those substrings that start before low , thats because we made sure every window that starts from low or before low will end at validind and in this prefix part we calculated from validind. 
+So in this part we may get substrings that start before validind but it will never start before low and also these 2 parts count separate substrings.
+Adding both of these we get our answer.
 */
 
 
@@ -40,7 +45,7 @@ public:
                 else ones--;
                 left--;
             }
-            rightmost[left]=right;
+            rightmost[right]=left;
             right--;
         }
         
@@ -49,7 +54,7 @@ public:
         for(int j=0;j<n;j++)
         {
             cnt+=j-leftmost[j]+1;
-            prefix.push_back(cnt);
+            prefix[j]=cnt;
         }
         vector<long long> result;
         for(int i=0;i<queries.size();i++)
@@ -58,7 +63,7 @@ public:
             int high=queries[i][1];
 
             int validlow=min(rightmost[low],high);
-            long long total=(validlow-low+1)*(validlow-low+2)/2;
+            long long total=1LL*(validlow-low+1)*(validlow-low+2)/2;
             total+=prefix[high]-prefix[validlow];
             result.push_back(total);
         }
